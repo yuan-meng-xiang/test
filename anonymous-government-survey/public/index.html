@@ -1,0 +1,1249 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>政府回复服务匿名问卷</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #1f2933;
+      --muted: #5f6b7a;
+      --line: #d8dee8;
+      --brand: #176b87;
+      --brand-dark: #0f4f64;
+      --accent: #2f855a;
+      --danger: #b42318;
+      --focus: #f2b84b;
+      --shadow: 0 12px 28px rgba(23, 42, 58, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.65;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      min-width: 0;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .brand-subtitle {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .top-progress {
+      display: grid;
+      grid-template-columns: auto 150px;
+      align-items: center;
+      gap: 8px;
+      min-width: 220px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      min-height: 38px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+
+    .btn:hover {
+      border-color: var(--brand);
+    }
+
+    .btn-primary {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
+
+    .btn-primary:hover {
+      background: var(--brand-dark);
+      border-color: var(--brand-dark);
+    }
+
+    .btn-danger {
+      color: var(--danger);
+    }
+
+    .btn:focus-visible,
+    input:focus-visible {
+      outline: 3px solid rgba(242, 184, 75, 0.48);
+      outline-offset: 2px;
+    }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 26px 20px 54px;
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 18px;
+    }
+
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-body {
+      padding: 22px;
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    .notice {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .reply {
+      margin-top: 16px;
+      padding: 16px;
+      border-left: 4px solid var(--brand);
+      background: #edf6f8;
+      border-radius: 6px;
+      color: #19323a;
+      white-space: pre-wrap;
+    }
+
+    .reply-options {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .reply-option {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .reply-option:hover {
+      border-color: var(--brand);
+      background: #f6fbfc;
+    }
+
+    .reply-option input {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      accent-color: var(--brand);
+    }
+
+    .stats {
+      display: grid;
+      gap: 14px;
+    }
+
+    .admin-panel {
+      display: none;
+      margin-bottom: 18px;
+    }
+
+    .admin-form {
+      display: grid;
+      grid-template-columns: minmax(160px, 1fr) minmax(160px, 1fr) auto;
+      gap: 10px;
+      align-items: end;
+      margin-top: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .field input {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+
+    .admin-actions {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .admin-stats {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f8fafc;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      line-height: 1.1;
+      font-weight: 800;
+      color: var(--brand);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .progress {
+      height: 10px;
+      border-radius: 999px;
+      background: #e8edf2;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand), var(--accent));
+      transition: width 0.2s ease;
+    }
+
+    form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .group {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .group-header {
+      padding: 14px 18px;
+      background: #f0f4f7;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+    }
+
+    .question {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .question:last-child {
+      border-bottom: 0;
+    }
+
+    .question-title {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+      font-weight: 650;
+    }
+
+    .qid {
+      color: var(--brand);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+    }
+
+    .scale-options {
+      grid-template-columns: repeat(5, minmax(80px, 1fr));
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      gap: 8px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .option:hover {
+      border-color: var(--brand);
+      background: #f6fbfc;
+    }
+
+    .option input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--brand);
+      flex: 0 0 auto;
+    }
+
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .message {
+      min-height: 24px;
+      color: var(--muted);
+    }
+
+    .message.error {
+      color: var(--danger);
+    }
+
+    .message.success {
+      color: var(--accent);
+    }
+
+    .thanks-panel {
+      display: none;
+      max-width: 680px;
+      margin: 64px auto 0;
+      text-align: center;
+    }
+
+    .thanks-text {
+      margin: 0 0 20px;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 860px) {
+      .topbar-inner,
+      .actions,
+      .admin-form {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .admin-form {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        justify-content: flex-start;
+      }
+
+      .top-progress {
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
+      .intro-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .scale-options {
+        grid-template-columns: repeat(5, minmax(54px, 1fr));
+      }
+
+      .scale-options .option {
+        justify-content: center;
+        padding: 8px 4px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      main {
+        padding: 18px 12px 38px;
+      }
+
+      .section-body,
+      .question,
+      .actions {
+        padding: 15px;
+      }
+
+      .question-title {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+
+      .options,
+      .scale-options {
+        grid-template-columns: 1fr;
+      }
+
+      .scale-options .option {
+        justify-content: flex-start;
+        padding: 9px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <h1 class="brand-title">政府回复服务匿名问卷</h1>
+        <p class="brand-subtitle">匿名填写，答卷统一保存到服务器；管理员可导出汇总结果。</p>
+      </div>
+      <div class="toolbar">
+        <div class="top-progress" id="topProgress">
+          <span>当前答题进度</span>
+          <div class="progress" aria-hidden="true">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+        <button class="btn" type="button" id="newRespondentBtn">重置问卷</button>
+        <button class="btn" type="button" id="exportBtn" hidden>导出 Excel</button>
+        <button class="btn btn-danger" type="button" id="clearBtn" hidden>清空数据</button>
+        <button class="btn" type="button" id="logoutBtn" hidden>退出登录</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section admin-panel" id="adminPanel">
+      <div class="section-body">
+        <h2 class="section-title">管理员登录</h2>
+        <p class="notice" id="adminStatus">请输入管理员用户名和密码。</p>
+        <div class="admin-stats" id="adminStats">
+          <div class="stat-value" id="responseCount">0</div>
+          <div class="stat-label">服务器已收集答卷</div>
+        </div>
+        <form class="admin-form" id="loginForm">
+          <div class="field">
+            <label for="adminUsername">用户名</label>
+            <input id="adminUsername" name="username" autocomplete="username" required>
+          </div>
+          <div class="field">
+            <label for="adminPassword">密码</label>
+            <input id="adminPassword" name="password" type="password" autocomplete="current-password" required>
+          </div>
+          <button class="btn btn-primary" type="submit">登录</button>
+        </form>
+        <div class="admin-actions" id="adminActions">
+          <button class="btn" type="button" id="panelExportBtn">导出 Excel</button>
+          <button class="btn btn-danger" type="button" id="panelClearBtn">清空数据</button>
+        </div>
+      </div>
+    </section>
+    <form id="surveyForm">
+      <div id="questionRoot"></div>
+      <div class="actions">
+        <div class="message" id="formMessage" aria-live="polite"></div>
+        <button class="btn btn-primary" type="submit">提交答卷</button>
+      </div>
+    </form>
+
+    <section class="section thanks-panel" id="thanksPanel">
+      <div class="section-body">
+        <p class="thanks-text">感谢您的参与和支持</p>
+        <button class="btn btn-primary" type="button" id="fillAgainBtn">再填一份</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE = "";
+    const questions = [
+      {
+            "group": "公共服务反馈经历",
+            "items": [
+                  {
+                        "id": "Q1",
+                        "text": "在过去12个月内，您是否曾通过以下任一渠道，就您所居住社区或所在城市的公共服务事项，向政府部门提交过建议、投诉、咨询或求助？",
+                        "options": [
+                              [
+                                    "1",
+                                    "政府官方网站（如“市长信箱”“我向总理说句话”等）"
+                              ],
+                              [
+                                    "2",
+                                    "政务服务小程序/App（如“随申办”“皖事通”等）"
+                              ],
+                              [
+                                    "3",
+                                    "12345政务服务便民热线"
+                              ],
+                              [
+                                    "4",
+                                    "其他"
+                              ]
+                        ]
+                  },
+                  {
+                        "id": "Q2",
+                        "text": "那次您提交的事项属于以下哪种类型？",
+                        "options": [
+                              [
+                                    "1",
+                                    "提出建议（如改善交通、增设设施等）"
+                              ],
+                              [
+                                    "2",
+                                    "投诉问题（如噪音、垃圾清理等）"
+                              ],
+                              [
+                                    "3",
+                                    "政策咨询（如医保、户籍政策等）"
+                              ],
+                              [
+                                    "4",
+                                    "求助帮扶（如生活困难、突发事件等）"
+                              ]
+                        ]
+                  },
+                  {
+                        "id": "Q3",
+                        "text": "在上述您提交过的所有事项中，是否至少有一次收到了来自政府部门的正式回复（包括电话、短信、书面回函或线上平台回复）？",
+                        "options": [
+                              [
+                                    "1",
+                                    "是"
+                              ],
+                              [
+                                    "2",
+                                    "否"
+                              ]
+                        ]
+                  },
+                  {
+                        "id": "Q4",
+                        "text": "您反映的问题涉及哪个领域？",
+                        "options": [
+                              [
+                                    "1",
+                                    "道路交通"
+                              ],
+                              [
+                                    "2",
+                                    "环境卫生"
+                              ],
+                              [
+                                    "3",
+                                    "公共安全"
+                              ],
+                              [
+                                    "4",
+                                    "教育医疗"
+                              ],
+                              [
+                                    "5",
+                                    "社区服务"
+                              ],
+                              [
+                                    "6",
+                                    "政务效能"
+                              ]
+                        ]
+                  },
+                  {
+                        "id": "Q5",
+                        "text": "在您得到的政府工作人员回复中，是否明确提到了具体的责任办理单位（如某具体部门）？",
+                        "options": [
+                              [
+                                    "1",
+                                    "是，明确提到了"
+                              ],
+                              [
+                                    "2",
+                                    "否，没有提到"
+                              ],
+                              [
+                                    "3",
+                                    "不确定/没注意"
+                              ]
+                        ]
+                  },
+                  {
+                        "id": "Q6",
+                        "text": "该回复是否明确提到了反馈或办理的具体时间/期限？",
+                        "options": [
+                              [
+                                    "1",
+                                    "是，明确提到了具体天数或日期"
+                              ],
+                              [
+                                    "2",
+                                    "否，只是模糊提及“尽快”"
+                              ],
+                              [
+                                    "3",
+                                    "不确定/没注意"
+                              ]
+                        ]
+                  },
+                  {
+                        "id": "Q7",
+                        "text": "该回复是否明确说明了如果没有按时完成，会有后续追踪或问责后果？",
+                        "options": [
+                              [
+                                    "1",
+                                    "是，明确说明了"
+                              ],
+                              [
+                                    "2",
+                                    "否，没有说明"
+                              ],
+                              [
+                                    "3",
+                                    "不确定/没注意"
+                              ]
+                        ]
+                  }
+            ]
+      },
+      {
+            "group": "回复感知评价",
+            "items": [
+                  {
+                        "id": "Q8",
+                        "text": "这条回复的篇幅/字数显得比较长。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q9",
+                        "text": "为了回复您的意见，政府工作人员付出了很大的努力。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q10",
+                        "text": "这条回复针对您提出的意见给出了很具体的说明。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q11",
+                        "text": "这条回复的语气非常有礼貌，态度友善。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q12",
+                        "text": "在现实生活中，政府工作人员给出这样的回复是非常真实、可信的。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q13",
+                        "text": "有了这样的回复，政府工作人员会对自己处理意见的结果负责。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q14",
+                        "text": "从回复来看，如果事情没办好，相关的政府部门或人员会受到追究。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q15",
+                        "text": "这条回复让您清楚了后续处理流程的具体步骤。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q16",
+                        "text": "整个处理过程对您而言是公开、明确的。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q17",
+                        "text": "您的这次反馈能够有效推动政府改善相关工作。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q18",
+                        "text": "像您这样的普通市民，有能力通过这种方式促进公共事务的解决。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q19",
+                        "text": "您对这次政府回复服务的整体质量感到满意。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q20",
+                        "text": "这种回复方式超出了您的预期。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q21",
+                        "text": "如果将来再有类似的征求意见活动，您仍然非常愿意参与。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q22",
+                        "text": "您会建议身边的朋友或家人也积极向政府反馈意见。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q23",
+                        "text": "基于这次回复，您认为本地政府能够真正解决民众关心的问题。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  },
+                  {
+                        "id": "Q24",
+                        "text": "您信任本地政府在做决策时会优先考虑公共利益。",
+                        "scale": [
+                              "非常不同意",
+                              "非常同意"
+                        ]
+                  }
+            ]
+      },
+      {
+            "group": "基本信息",
+            "items": [
+                  {
+                        "id": "Q25",
+                        "text": "您的年龄是：",
+                        "options": [
+                              [
+                                    "1",
+                                    "30岁以下"
+                              ],
+                              [
+                                    "2",
+                                    "30岁以上"
+                              ]
+                        ]
+                  },
+                  {
+                        "id": "Q26",
+                        "text": "您的性别：",
+                        "options": [
+                              [
+                                    "1",
+                                    "男"
+                              ],
+                              [
+                                    "2",
+                                    "女"
+                              ]
+                        ]
+                  },
+                  {
+                        "id": "Q27",
+                        "text": "您的受教育程度：",
+                        "options": [
+                              [
+                                    "1",
+                                    "本科及以下"
+                              ],
+                              [
+                                    "2",
+                                    "硕士及以上"
+                              ]
+                        ]
+                  },
+                  {
+                        "id": "Q28",
+                        "text": "您目前的常住地属于：",
+                        "options": [
+                              [
+                                    "1",
+                                    "城市/城区"
+                              ],
+                              [
+                                    "2",
+                                    "乡镇/农村"
+                              ]
+                        ]
+                  },
+                  {
+                        "id": "Q29",
+                        "text": "在本次调查之前，您是否有过向政府或社区提建议、投诉或咨询的经历？",
+                        "options": [
+                              [
+                                    "1",
+                                    "有"
+                              ],
+                              [
+                                    "2",
+                                    "没有"
+                              ]
+                        ]
+                  },
+                  {
+                        "id": "Q30",
+                        "text": "总的来说，您对政治或公共事务（如本地新闻、政府政策）的关注程度如何？",
+                        "scale": [
+                              "非常不关注",
+                              "非常关注"
+                        ]
+                  },
+                  {
+                        "id": "Q31",
+                        "text": "在参与本次调查之前，您对本地政府（区/县或街道）的整体信任程度如何？",
+                        "scale": [
+                              "非常不信任",
+                              "非常信任"
+                        ]
+                  }
+            ]
+      }
+];
+
+    const allQuestions = questions.flatMap(group => group.items);
+    const form = document.getElementById("surveyForm");
+    const questionRoot = document.getElementById("questionRoot");
+    const thanksPanel = document.getElementById("thanksPanel");
+    const fillAgainBtn = document.getElementById("fillAgainBtn");
+    const responseCount = document.getElementById("responseCount");
+    const progressBar = document.getElementById("progressBar");
+    const topProgress = document.getElementById("topProgress");
+    const formMessage = document.getElementById("formMessage");
+    const exportBtn = document.getElementById("exportBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const newRespondentBtn = document.getElementById("newRespondentBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const toolbar = document.querySelector(".toolbar");
+    const adminPanel = document.getElementById("adminPanel");
+    const adminStatus = document.getElementById("adminStatus");
+    const adminStats = document.getElementById("adminStats");
+    const loginForm = document.getElementById("loginForm");
+    const adminActions = document.getElementById("adminActions");
+    const panelExportBtn = document.getElementById("panelExportBtn");
+    const panelClearBtn = document.getElementById("panelClearBtn");
+    const isAdminPage = window.location.pathname.replace(/\/+$/, "") === "/admin";
+    const isThanksPage = window.location.pathname.replace(/\/+$/, "") === "/thanks";
+
+    setupPageMode();
+    function renderQuestions() {
+      questionRoot.innerHTML = questions.map(group => {
+        const items = group.items.map(question => {
+          const isScale = Boolean(question.scale);
+          const options = isScale
+            ? [1, 2, 3, 4, 5].map(value => [String(value), String(value)])
+            : question.options;
+          const optionHtml = options.map(([value, label]) => `
+            <label class="option">
+              <input type="radio" name="${question.id}" value="${escapeHtml(value)}" required>
+              <span>${escapeHtml(label)}</span>
+            </label>
+          `).join("");
+          const scaleLabels = isScale
+            ? `<div class="scale-labels"><span>1=${escapeHtml(question.scale[0])}</span><span>5=${escapeHtml(question.scale[1])}</span></div>`
+            : "";
+
+          return `
+            <div class="question" data-question="${question.id}">
+              <div class="question-title">
+                <span class="qid">${question.id}</span>
+                <span>${escapeHtml(question.text)}</span>
+              </div>
+              <div class="options ${isScale ? "scale-options" : ""}">
+                ${optionHtml}
+              </div>
+              ${scaleLabels}
+            </div>
+          `;
+        }).join("");
+
+        return `
+          <section class="group">
+            <div class="group-header">${escapeHtml(group.group)}</div>
+            ${items}
+          </section>
+        `;
+      }).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function updateCount() {
+      try {
+        const response = await fetch(`${API_BASE}/api/count`, { cache: "no-store" });
+        if (!response.ok) throw new Error("count request failed");
+        const data = await response.json();
+        responseCount.textContent = String(data.count ?? 0);
+      } catch (error) {
+        responseCount.textContent = "-";
+      }
+    }
+
+    function updateProgress() {
+      const answered = allQuestions.filter(question => form.elements[question.id]?.value).length;
+      progressBar.style.width = `${Math.round((answered / allQuestions.length) * 100)}%`;
+    }
+
+    function setMessage(text, type = "") {
+      formMessage.textContent = text;
+      formMessage.className = `message ${type}`.trim();
+    }
+
+    function setAdminStatus(text, type = "") {
+      adminStatus.textContent = text;
+      adminStatus.style.color = type === "error" ? "var(--danger)" : type === "success" ? "var(--accent)" : "var(--muted)";
+    }
+
+    function setupPageMode() {
+      if (isThanksPage) {
+        showThanksPage(false);
+        return;
+      }
+      if (!isAdminPage) return;
+      adminPanel.style.display = "block";
+      topProgress.hidden = true;
+      form.hidden = true;
+      newRespondentBtn.hidden = true;
+      checkAdminSession();
+    }
+
+    function setAdminAuthenticated(authenticated) {
+      exportBtn.hidden = !authenticated;
+      clearBtn.hidden = !authenticated;
+      logoutBtn.hidden = !authenticated;
+      adminStats.style.display = authenticated ? "block" : "none";
+      adminActions.style.display = authenticated ? "flex" : "none";
+      loginForm.hidden = authenticated;
+      setAdminStatus(authenticated ? "已登录，可以导出或清空服务器汇总数据。" : "请输入管理员用户名和密码。", authenticated ? "success" : "");
+    }
+
+    async function checkAdminSession() {
+      try {
+        const response = await fetch(`${API_BASE}/api/me`, { cache: "no-store" });
+        const data = await response.json();
+        setAdminAuthenticated(Boolean(data.authenticated));
+      } catch (error) {
+        setAdminAuthenticated(false);
+        setAdminStatus("无法确认登录状态，请稍后重试。", "error");
+      }
+    }
+
+    function buildResponseRow() {
+      const row = {};
+
+      allQuestions.forEach(question => {
+        row[question.id] = form.elements[question.id].value;
+      });
+
+      return row;
+    }
+
+    function formatDateTime(date) {
+      const pad = value => String(value).padStart(2, "0");
+      return [
+        date.getFullYear(),
+        pad(date.getMonth() + 1),
+        pad(date.getDate())
+      ].join("-") + " " + [
+        pad(date.getHours()),
+        pad(date.getMinutes()),
+        pad(date.getSeconds())
+      ].join(":");
+    }
+
+    function resetForNextRespondent() {
+      form.reset();
+      setMessage("");
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showThanksPage(pushState = true) {
+      if (pushState && window.location.pathname !== "/thanks") {
+        window.history.pushState({ page: "thanks" }, "", "/thanks");
+      }
+      form.hidden = true;
+      form.style.display = "none";
+      thanksPanel.style.display = "block";
+      topProgress.hidden = true;
+      newRespondentBtn.hidden = true;
+      toolbar.hidden = true;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showSurveyPage() {
+      if (window.location.pathname !== "/") {
+        window.history.pushState({ page: "survey" }, "", "/");
+      }
+      if (!questionRoot.hasChildNodes()) {
+        renderQuestions();
+      }
+      resetForNextRespondent();
+      thanksPanel.style.display = "none";
+      form.hidden = false;
+      form.style.display = "";
+      if (!isAdminPage) {
+        topProgress.hidden = false;
+        newRespondentBtn.hidden = false;
+        toolbar.hidden = false;
+      }
+    }
+
+    function exportExcel() {
+      const link = document.createElement("a");
+      link.href = `${API_BASE}/api/export`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      if (isAdminPage) {
+        setAdminStatus("已开始导出服务器汇总结果。", "success");
+      } else {
+        setMessage("已开始导出服务器汇总结果。", "success");
+      }
+    }
+
+    form.addEventListener("change", updateProgress);
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      if (!form.reportValidity()) {
+        setMessage("请先完成所有题目。", "error");
+        return;
+      }
+
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      setMessage("正在提交...", "");
+
+      try {
+        const response = await fetch(`${API_BASE}/api/responses`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(buildResponseRow())
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) {
+          throw new Error(data.error || "submit failed");
+        }
+        await updateCount();
+        showThanksPage();
+      } catch (error) {
+        setMessage("提交失败，请检查网络后重试。", "error");
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    exportBtn.addEventListener("click", exportExcel);
+    panelExportBtn.addEventListener("click", exportExcel);
+
+    async function clearResponses() {
+      if (!confirm("确定清空服务器已保存的所有答卷吗？此操作不可撤销。")) return;
+      try {
+        const response = await fetch(`${API_BASE}/api/responses`, { method: "DELETE" });
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error || "clear failed");
+        if (isAdminPage) {
+          setAdminStatus("服务器答卷数据已清空。", "success");
+        } else {
+          setMessage("服务器答卷数据已清空。", "success");
+        }
+        updateCount();
+      } catch (error) {
+        if (isAdminPage) {
+          setAdminStatus("清空失败，请确认已登录。", "error");
+        } else {
+          setMessage("清空失败，请确认已登录。", "error");
+        }
+      }
+    }
+
+    clearBtn.addEventListener("click", clearResponses);
+    panelClearBtn.addEventListener("click", clearResponses);
+
+    loginForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      const submitButton = loginForm.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      setAdminStatus("正在登录...");
+      try {
+        const response = await fetch(`${API_BASE}/api/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: loginForm.elements.username.value,
+            password: loginForm.elements.password.value
+          })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) throw new Error(data.error || "login failed");
+        loginForm.reset();
+        setAdminAuthenticated(true);
+        updateCount();
+      } catch (error) {
+        setAdminAuthenticated(false);
+        setAdminStatus("用户名或密码错误。", "error");
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await fetch(`${API_BASE}/api/logout`, { method: "POST" });
+      } finally {
+        setAdminAuthenticated(false);
+      }
+    });
+
+    newRespondentBtn.addEventListener("click", () => {
+      resetForNextRespondent();
+      setMessage("问卷已重置。", "success");
+    });
+
+    fillAgainBtn.addEventListener("click", showSurveyPage);
+
+    window.addEventListener("popstate", () => {
+      if (window.location.pathname === "/thanks") {
+        showThanksPage(false);
+      } else if (!isAdminPage) {
+        showSurveyPage();
+      }
+    });
+
+    if (!isThanksPage) {
+      renderQuestions();
+    }
+    updateCount();
+    if (!isThanksPage) {
+      updateProgress();
+    }
+  </script>
+</body>
+</html>

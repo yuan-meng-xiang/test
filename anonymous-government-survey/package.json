@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "dev": "npx netlify dev",
+    "build": "echo \"Static site: no build step\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^4.2.5",
+    "typescript": "^5.9.3"
+  }
+}
